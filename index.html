@@ -108,37 +108,46 @@
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const key = urlParams.get('key');
-        const keyElement = document.getElementById('pokemon-key');
-        const catchPhraseElement = document.getElementById('catch-phrase'); // 멘트 엘리먼트 가져오기
+        // 페이지가 완전히 로드된 후에 스크립트 실행
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const key = urlParams.get('key');
+            const keyElement = document.getElementById('pokemon-key');
+            const catchPhraseElement = document.getElementById('catch-phrase');
 
-        if (key) {
-            // 느낌표 제거
-            keyElement.textContent = key;
-            // 잡았다! 멘트 추가
-            catchPhraseElement.textContent = key + '을(를) 잡았다!';
-        } else {
-            keyElement.textContent = 'Wild Pokemon!';
-            catchPhraseElement.textContent = '키가 존재하지 않습니다!';
-        }
+            if (key) {
+                keyElement.textContent = key;
+                catchPhraseElement.textContent = key + '을(를) 잡았다!';
+            } else {
+                keyElement.textContent = 'Wild Pokemon!';
+                catchPhraseElement.textContent = '키가 존재하지 않아요!';
+            }
 
-        const saveButton = document.getElementById('saveImageButton');
-        const eventCard = document.getElementById('eventCard');
+            const saveButton = document.getElementById('saveImageButton');
+            const eventCard = document.getElementById('eventCard');
+            const instaButton = document.getElementById('instaLink');
 
-        saveButton.addEventListener('click', () => {
-            html2canvas(eventCard, {
-                useCORS: true,
-                backgroundColor: null,
-            }).then(function(canvas) {
-                const link = document.createElement('a');
-                // 파일명에 '(을)를 잡았다!' 같은 텍스트는 빼는게 좋음
-                const cleanKey = key ? key.trim() : 'HBS_Event_Result';
-                link.download = `${cleanKey}.png`;
-                link.href = canvas.toURL('image/png');
-                link.click();
+            saveButton.addEventListener('click', () => {
+                // 캡처 전에 두 버튼을 숨김
+                instaButton.style.display = 'none';
+                saveButton.style.display = 'none';
+
+                html2canvas(eventCard, {
+                    useCORS: true, // <-- 외부 폰트 사용 허용 요청!
+                    backgroundColor: null,
+                }).then(function(canvas) {
+                    const link = document.createElement('a');
+                    const cleanKey = key ? key.trim() : 'HBS_Event_Result';
+                    link.download = `${cleanKey}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }).finally(() => {
+                    // 캡처가 끝나면 버튼을 다시 보여줌
+                    instaButton.style.display = 'block';
+                    saveButton.style.display = 'block';
+                });
             });
-        });
+        };
     </script>
 
 </body>
