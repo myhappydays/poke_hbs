@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBS 이벤트</title>
+    <title>HBS, 넌 내꺼야!</title>
     <style>
-        /* Pretendard 폰트 불러오기 (한글 지원) */
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css');
-        /* Press Start 2P 폰트 불러오기 (영어/숫자용) */
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        /* '갈무리' 폰트 불러오기 (도트 스타일 한글 지원) */
+        @import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
 
         body {
-            background-color: #FAF3E3; /* QR코드와 동일한 아이보리 배경 */
-            /* 한글은 Pretendard, 영어/숫자는 Press Start 2P, 없으면 sans-serif */
-            font-family: 'Pretendard', sans-serif; 
+            background-color: #FAF3E3;
+            /* 폰트를 '갈무리'로 통일 */
+            font-family: 'Galmuri11', 'Galmuri9', 'Galmuri7', sans-serif;
             color: #333;
             display: flex;
             justify-content: center;
@@ -27,42 +25,56 @@
 
         .card {
             background-color: white;
-            padding: 40px 30px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             max-width: 90%;
+            width: 400px;
+        }
+        
+        /* 이벤트 제목 스타일 */
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
         }
 
-        h1 {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #555;
-            line-height: 1.5;
-            /* h1 같은 영어 부분에 픽셀 폰트 적용 (옵션) */
-            font-family: 'Press Start 2P', 'Pretendard', cursive; 
+        /* 포켓몬 이미지 더미(placeholder) 스타일 */
+        .pokemon-image-placeholder {
+            width: 150px;
+            height: 150px;
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            margin: 0 auto 20px; /* 위아래 간격 조절 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            font-size: 0.8em;
         }
 
         #pokemon-key {
             font-size: 1.5em;
             color: #FF1B1B; /* 포인트 컬러: 포켓몬 레드 */
-            margin-bottom: 40px;
-            min-height: 50px;
+            margin-bottom: 30px;
+            min-height: 40px;
             word-break: keep-all;
-            /* 키 값은 한글이 많을 수 있으니 Pretendard 우선 */
-            font-family: 'Pretendard', sans-serif; 
         }
         
-        /* 인스타그램 버튼도 Pretendard 적용 */
         .insta-button {
-            display: inline-block;
+            display: block; /* 버튼을 한 줄에 하나씩 배치 */
             background-color: #FF1B1B;
             color: white;
-            padding: 15px 30px;
+            padding: 15px 20px;
             text-decoration: none;
             border-radius: 10px;
             font-size: 1em;
             transition: background-color 0.2s ease;
-            font-family: 'Pretendard', sans-serif; 
+            margin: 10px auto 0; /* 버튼 간 간격 */
+            border: none;
+            cursor: pointer;
+            width: 80%; /* 버튼 너비 */
+            box-sizing: border-box;
         }
 
         .insta-button:hover {
@@ -72,24 +84,47 @@
 </head>
 <body>
 
-    <div class="card">
-        <h1>You've found a...</h1>
+    <div class="card" id="eventCard">
+        <h1>HBS, 넌 내꺼야!</h1>
+        
+        <div class="pokemon-image-placeholder">Image</div>
+
         <div id="pokemon-key">Loading...</div>
+        
         <a href="https://www.instagram.com/hbs._.official/" target="_blank" class="insta-button">
             HBS 인스타그램
         </a>
+        <button id="saveImageButton" class="insta-button">
+            결과 이미지 저장하기
+        </button>
     </div>
 
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const key = urlParams.get('key');
         const keyElement = document.getElementById('pokemon-key');
 
         if (key) {
-            keyElement.textContent = key; // <-- 느낌표는 2번에서 추가
+            keyElement.textContent = key + '!!';
         } else {
             keyElement.textContent = 'Wild Pokemon!';
         }
+
+        const saveButton = document.getElementById('saveImageButton');
+        const eventCard = document.getElementById('eventCard');
+
+        saveButton.addEventListener('click', () => {
+            html2canvas(eventCard, {
+                useCORS: true,
+                backgroundColor: null,
+            }).then(function(canvas) {
+                const link = document.createElement('a');
+                link.download = `${key || 'HBS_Event_Result'}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
     </script>
 
 </body>
