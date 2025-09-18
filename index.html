@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HBS 이벤트</title>
     <style>
-        /* 1. 픽셀 폰트 불러오기 */
+        /* Pretendard 폰트 불러오기 (한글 지원) */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css');
+        /* Press Start 2P 폰트 불러오기 (영어/숫자용) */
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-        /* 2. 기본 스타일 설정 */
         body {
-            background-color: #FAF3E3;
-            font-family: 'Press Start 2P', cursive;
+            background-color: #FAF3E3; /* QR코드와 동일한 아이보리 배경 */
+            /* 한글은 Pretendard, 영어/숫자는 Press Start 2P, 없으면 sans-serif */
+            font-family: 'Pretendard', sans-serif; 
             color: #333;
             display: flex;
             justify-content: center;
@@ -23,7 +25,6 @@
             box-sizing: border-box;
         }
 
-        /* 3. 흰색 카드 영역 스타일 */
         .card {
             background-color: white;
             padding: 40px 30px;
@@ -32,36 +33,40 @@
             max-width: 90%;
         }
 
-        /* 4. 텍스트 스타일 */
         h1 {
-            font-size: 1.2em; /* em 단위로 부모 요소에 비례하게 조절 */
+            font-size: 1.2em;
             margin-bottom: 20px;
             color: #555;
             line-height: 1.5;
+            /* h1 같은 영어 부분에 픽셀 폰트 적용 (옵션) */
+            font-family: 'Press Start 2P', 'Pretendard', cursive; 
         }
 
         #pokemon-key {
             font-size: 1.5em;
             color: #FF1B1B; /* 포인트 컬러: 포켓몬 레드 */
             margin-bottom: 40px;
-            min-height: 50px; /* 키가 없을 때도 공간 유지 */
-            word-break: keep-all; /* 단어 단위로 줄바꿈 */
+            min-height: 50px;
+            word-break: keep-all;
+            /* 키 값은 한글이 많을 수 있으니 Pretendard 우선 */
+            font-family: 'Pretendard', sans-serif; 
         }
         
-        /* 5. 인스타그램 바로가기 버튼 스타일 */
+        /* 인스타그램 버튼도 Pretendard 적용 */
         .insta-button {
             display: inline-block;
-            background-color: #FF1B1B; /* 포인트 컬러: 포켓몬 레드 */
+            background-color: #FF1B1B;
             color: white;
             padding: 15px 30px;
             text-decoration: none;
             border-radius: 10px;
             font-size: 1em;
             transition: background-color 0.2s ease;
+            font-family: 'Pretendard', sans-serif; 
         }
 
         .insta-button:hover {
-            background-color: #CC0000; /* 마우스 올렸을 때 살짝 어둡게 */
+            background-color: #CC0000;
         }
     </style>
 </head>
@@ -76,15 +81,12 @@
     </div>
 
     <script>
-        // URL에서 'key' 파라미터 값 가져오기
         const urlParams = new URLSearchParams(window.location.search);
         const key = urlParams.get('key');
-
         const keyElement = document.getElementById('pokemon-key');
 
-        // key 값이 있으면 해당 값을, 없으면 기본 메시지를 표시
         if (key) {
-            keyElement.textContent = key;
+            keyElement.textContent = key; // <-- 느낌표는 2번에서 추가
         } else {
             keyElement.textContent = 'Wild Pokemon!';
         }
