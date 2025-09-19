@@ -5,146 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HBS, 넌 내꺼야!</title>
     <style>
-        /* '갈무리' 폰트 불러오기 */
         @import url('https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css');
 
+        :root {
+            --poke-blue: #2c5aa8;
+            --poke-yellow: #ffcb05;
+            --poke-border: #3c3c3c;
+            --poke-bg: #f5f5f5;
+            --text-color: #333;
+            /* 버튼 그림자 색상 */
+            --button-shadow: #c79a00;
+        }
+
         body {
-            background-color: #FAF3E3;
+            background-color: var(--poke-blue); /* Fallback */
+            background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.05) 75%),
+                              linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.05) 75%);
+            background-size: 10px 10px;
             font-family: 'Galmuri11', 'Galmuri9', 'Galmuri7', sans-serif;
-            color: #333;
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             text-align: center;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
         }
 
-        .card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            max-width: 90%;
-            width: 400px;
-        }
-        
-        h1 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
-        }
-
-        .pokemon-image-placeholder {
-            width: 150px;
-            height: 150px;
-            background-color: #f0f0f0;
-            border: 2px dashed #ccc;
-            margin: 0 auto 20px;
+        /* --- 레이아웃 컨테이너 --- */
+        .main-container {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            color: #aaa;
-            font-size: 0.8em;
+            align-items: stretch;
+            gap: 20px;
+            width: 100%;
+            opacity: 0; 
+            transition: opacity 0.5s ease-in 0.5s; 
         }
 
-        #pokemon-key {
-            font-size: 1.5em;
-            color: #FF1B1B; /* 포켓몬 레드 */
-            margin-bottom: 10px; /* 아래 멘트와 간격 조절 */
-            min-height: 40px;
-            word-break: keep-all;
+        .card, .info-card {
+            background-color: var(--poke-bg);
+            padding: 20px;
+            border: 8px solid var(--poke-border);
+            border-radius: 10px;
+            box-shadow: 
+                inset 0 0 0 4px var(--poke-bg),
+                inset 0 0 0 8px var(--poke-border);
+            width: 400px;
+            max-width: 90%;
         }
 
-        /* '~를 잡았다!' 멘트 스타일 */
-        #catch-phrase {
-            font-size: 1.1em;
-            color: #555;
-            margin-bottom: 30px;
-            min-height: 20px;
+        .info-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 300px;
+        }
+        .info-card h2 { font-size: 1.5em; margin-bottom: 15px; color: var(--poke-blue); }
+        .info-card p { font-size: 1.1em; color: #555; }
+
+        /* --- 이벤트 카드 --- */
+        .card h1 { font-size: 1.8em; margin-bottom: 20px; color: var(--poke-blue); text-shadow: 2px 2px 0 #fff; }
+        #pokemon-image { width: 128px; height: 128px; margin: 0 auto 15px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; background-color: #e0e0e0; border: 4px solid var(--poke-border); border-radius: 5px; }
+        #pokemon-key { font-size: 1.5em; color: #d9534f; margin-bottom: 10px; min-height: 40px; word-break: keep-all; }
+        #catch-phrase { font-size: 1.1em; color: #555; margin-bottom: 30px; min-height: 20px; }
+        
+        /* --- 픽셀 아트 버튼 스타일 --- */
+        .action-button {
+            position: relative; /* 호버 효과를 위해 position 설정 */
+            display: block;
+            background-color: var(--poke-yellow);
+            color: var(--poke-blue);
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 20px auto 0;
+            border: 2px solid var(--poke-border);
+            cursor: pointer;
+            width: 90%;
+            box-sizing: border-box;
+            font-family: 'Galmuri11', 'Galmuri9', 'Galmuri7', sans-serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+            /* 픽셀 스타일 그림자로 두께감 표현 */
+            box-shadow: 4px 4px 0px var(--button-shadow);
+            transition: transform 0.1s, box-shadow 0.1s; /* 부드러운 전환 효과 */
+        }
+        .action-button.disabled { 
+            background-color: #a0a0a0; 
+            color: #666; 
+            box-shadow: 4px 4px 0px #6e6e6e;
+            pointer-events: none; 
+            cursor: default; 
         }
         
-        .insta-button {
-            display: block;
-            background-color: #FF1B1B;
-            color: white;
-            padding: 15px 20px;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: background-color 0.2s ease;
-            margin: 10px auto 0;
-            border: none;
-            cursor: pointer;
-            width: 80%;
-            box-sizing: border-box;
-            /* 버튼 폰트가 적용 안되는 문제를 막기 위해 폰트를 한 번 더 명시 */
-            font-family: 'Galmuri11', 'Galmuri9', 'Galmuri7', sans-serif;
+        .action-button:hover:not(.disabled) {
+            /* 호버 시 버튼을 그림자 위치로 이동시켜 두께감 없애기 */
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px var(--button-shadow);
         }
 
-        .insta-button:hover {
-            background-color: #CC0000;
+        .action-button:active:not(.disabled) {
+            /* 클릭 시 미세한 밝기 변화로 피드백 */
+            filter: brightness(0.95);
+        }
+
+        /* --- 오프닝 트랜지션 --- */
+        #transition-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; display: flex; flex-direction: column; pointer-events: none; }
+        .overlay-stripe { flex-grow: 1; width: 100%; background: #000; animation: stripe-wipe 1.2s forwards; }
+        .overlay-stripe:nth-child(odd) { animation-direction: reverse; }
+        .overlay-stripe:nth-child(1) { animation-delay: 0s; }
+        .overlay-stripe:nth-child(2) { animation-delay: 0.05s; }
+        .overlay-stripe:nth-child(3) { animation-delay: 0.1s; }
+        .overlay-stripe:nth-child(4) { animation-delay: 0.15s; }
+        .overlay-stripe:nth-child(5) { animation-delay: 0.2s; }
+        @keyframes stripe-wipe { 0% { transform: translateX(-101%); } 50% { transform: translateX(0%); } 100% { transform: translateX(101%); } }
+
+        /* --- 반응형 --- */
+        @media (max-width: 800px) {
+            body { overflow-y: auto; height: auto; padding: 20px 10px; }
+            .main-container { flex-direction: column; align-items: center; }
+            .card, .info-card { width: 400px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="card" id="eventCard">
-        <h1>HBS, 넌 내꺼야!</h1>
-        
-        <div class="pokemon-image-placeholder">Image</div>
+    <div id="transition-overlay">
+        <div class="overlay-stripe"></div> <div class="overlay-stripe"></div> <div class="overlay-stripe"></div> <div class="overlay-stripe"></div> <div class="overlay-stripe"></div>
+    </div>
 
-        <div id="pokemon-key">Loading...</div>
-        <div id="catch-phrase"></div>
-        
-        <a href="https://www.instagram.com/hbs._.official/" target="_blank" class="insta-button">
-            HBS 인스타그램
-        </a>
-        <button id="saveImageButton" class="insta-button">
-            결과 이미지 저장하기
-        </button>
+    <div class="main-container">
+        <div class="card" id="eventCard">
+            <h1>HBS, 넌 내꺼야!</h1>
+            <img id="pokemon-image" src="" alt="잡은 포켓몬" style="display: none;">
+            <div id="pokemon-key">Loading...</div>
+            <div id="catch-phrase"></div>
+            <a id="instaLink" href="https://www.instagram.com/hbs._.official/" target="_blank" class="action-button">HBS 인스타그램</a>
+            <button id="saveImageButton" class="action-button">결과 이미지 저장</button>
+        </div>
+        <div class="info-card">
+            <h2>이벤트 참여 방법</h2>
+            <p>(실제 이벤트 참여 방법을 적어야 함.)</p>
+        </div>
     </div>
 
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
-        // 페이지가 완전히 로드된 후에 스크립트 실행
         window.onload = function() {
+            const mainContainer = document.querySelector('.main-container');
+            const transitionOverlay = document.getElementById('transition-overlay');
+            mainContainer.style.opacity = '1';
+            setTimeout(() => { 
+                if (transitionOverlay) transitionOverlay.style.display = 'none'; 
+            }, 1500);
+
             const urlParams = new URLSearchParams(window.location.search);
             const key = urlParams.get('key');
+
+            const eventCard = document.getElementById('eventCard');
             const keyElement = document.getElementById('pokemon-key');
             const catchPhraseElement = document.getElementById('catch-phrase');
+            const pokemonImage = document.getElementById('pokemon-image');
+            const saveImageButton = document.getElementById('saveImageButton');
+            const instaLink = document.getElementById('instaLink');
 
             if (key) {
+                const pokemonName = key.split(' ').pop();
+                const imageUrl = `images/${pokemonName}.gif`;
+                
+                const preloadedImage = new Image();
+                preloadedImage.src = imageUrl;
+                preloadedImage.onload = () => { 
+                    pokemonImage.src = imageUrl; 
+                    pokemonImage.style.display = 'block'; 
+                };
+                preloadedImage.onerror = () => { 
+                    pokemonImage.style.display = 'none'; 
+                    keyElement.textContent = '오류 발생!'; 
+                    catchPhraseElement.textContent = '이미지를 불러올 수 없습니다.'; 
+                };
+
                 keyElement.textContent = key;
                 catchPhraseElement.textContent = key + '을(를) 잡았다!';
+
             } else {
-                keyElement.textContent = 'Wild Pokemon!';
-                catchPhraseElement.textContent = '키가 존재하지 않아요!';
+                keyElement.textContent = '앗! 야생의 포켓몬이다!';
+                catchPhraseElement.textContent = 'QR 코드를 다시 스캔해주세요!';
+                pokemonImage.style.display = 'none';
+                saveImageButton.classList.add('disabled');
             }
 
-            const saveButton = document.getElementById('saveImageButton');
-            const eventCard = document.getElementById('eventCard');
-            const instaButton = document.getElementById('instaLink');
+            saveImageButton.addEventListener('click', () => {
+                if (saveImageButton.classList.contains('disabled')) return;
 
-            saveButton.addEventListener('click', () => {
-                // 캡처 전에 두 버튼을 숨김
-                instaButton.style.display = 'none';
-                saveButton.style.display = 'none';
+                instaLink.style.display = 'none';
+                saveImageButton.style.display = 'none';
 
                 html2canvas(eventCard, {
-                    useCORS: true, // <-- 외부 폰트 사용 허용 요청!
+                    useCORS: true,
                     backgroundColor: null,
-                }).then(function(canvas) {
+                    scale: 2
+                }).then(canvas => {
                     const link = document.createElement('a');
-                    const cleanKey = key ? key.trim() : 'HBS_Event_Result';
+                    const cleanKey = key ? key.trim().replace(/[\/:"*?<>|]/g, '').replace(/ /g, '_') : 'HBS_Event_Result';
                     link.download = `${cleanKey}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                 }).finally(() => {
-                    // 캡처가 끝나면 버튼을 다시 보여줌
-                    instaButton.style.display = 'block';
-                    saveButton.style.display = 'block';
+                    instaLink.style.display = 'block';
+                    saveImageButton.style.display = 'block';
                 });
             });
         };
