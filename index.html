@@ -25,12 +25,13 @@
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; 
             height: 100vh;
             margin: 0;
             text-align: center;
             padding: 10px;
             box-sizing: border-box;
+            padding-bottom: 40px; 
         }
 
         /* --- 레이아웃 컨테이너 --- */
@@ -43,37 +44,47 @@
             width: 100%;
             opacity: 0; 
             transition: opacity 0.5s ease-in 0.5s; 
+            margin-top: 10vh; 
         }
 
         .card, .info-card {
             background-color: var(--poke-bg);
-            padding: 20px;
-            border: 8px solid var(--poke-border);
-            border-radius: 10px;
+            border: 6px solid var(--poke-border);
+            border-radius: 7px;
             box-shadow: 
-                inset 0 0 0 4px var(--poke-bg),
-                inset 0 0 0 8px var(--poke-border);
-            width: 400px;
+                inset 0 0 0 3px var(--poke-bg),
+                inset 0 0 0 6px var(--poke-border);
+            width: 280px;
             max-width: 90%;
         }
 
+        .card {
+            padding: 25px 14px; 
+        }
+
         .info-card {
+            padding: 14px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            width: 300px;
+            width: 210px;
         }
-        .info-card h2 { font-size: 1.5em; margin-bottom: 15px; color: var(--poke-blue); }
-        .info-card p { font-size: 1.1em; color: #555; }
+        .info-card h2 { font-size: 1.3em; margin-bottom: 12px; color: var(--poke-blue); }
+        .info-card p { font-size: 0.9em; color: #555; }
 
         /* --- 이벤트 카드 --- */
-        .card h1 { font-size: 1.8em; margin-bottom: 20px; color: var(--poke-blue); text-shadow: 2px 2px 0 #fff; }
-        #pokemon-image { width: 128px; height: 128px; margin: 0 auto 15px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; background-color: #e0e0e0; border: 4px solid var(--poke-border); border-radius: 5px; }
-        #pokemon-key { font-size: 1.5em; color: #d9534f; margin-bottom: 10px; min-height: 40px; word-break: keep-all; }
-        #catch-phrase { font-size: 1.1em; color: #555; margin-bottom: 30px; min-height: 20px; }
+        .card h1 { font-size: 1.6em; margin-bottom: 15px; color: var(--poke-blue); text-shadow: 2px 2px 0 #fff; }
+        #pokemon-image { width: 90px; height: 90px; margin: 0 auto 12px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; background-color: #e0e0e0; border: 3px solid var(--poke-border); border-radius: 4px; }
+        #pokemon-key { font-size: 1.3em; color: #d9534f; margin-bottom: 8px; min-height: 30px; word-break: keep-all; }
+        #catch-phrase { font-size: 0.9em; color: #555; margin-bottom: 20px; min-height: 16px; }
         
+        /* --- 픽셀 아트 버튼 스타일 --- */
+        #saveImageButton {
+            margin-top: 10px;
+        }
+
         .action-button {
-            position: relative; /* 호버 효과를 위해 position 설정 */
+            position: relative;
             display: block;
             background-color: var(--poke-yellow);
             color: var(--poke-blue);
@@ -89,9 +100,8 @@
             font-family: 'Galmuri11', 'Galmuri9', 'Galmuri7', sans-serif;
             font-weight: bold;
             text-shadow: 1px 1px 0 #fff;
-            /* 픽셀 스타일 그림자로 두께감 표현 */
             box-shadow: 4px 4px 0px var(--button-shadow);
-            transition: transform 0.1s, box-shadow 0.1s; 
+            transition: transform 0.1s, box-shadow 0.1s;
         }
         .action-button.disabled { 
             background-color: #a0a0a0; 
@@ -100,9 +110,8 @@
             pointer-events: none; 
             cursor: default; 
         }
-        
-        .action-button:hover:not(.disabled) {
-            /* 호버 시 버튼을 그림자 위치로 이동 */
+
+        .action-button.button-pressed {
             transform: translate(4px, 4px);
             box-shadow: 0px 0px 0px var(--button-shadow);
         }
@@ -124,9 +133,43 @@
 
         /* --- 반응형 --- */
         @media (max-width: 800px) {
-            body { overflow-y: auto; height: auto; padding: 30px 15px; }
+            body { overflow-y: auto; height: auto; padding: 30px 15px; padding-bottom: 40px; }
             .main-container { flex-direction: column; align-items: center; }
-            .card, .info-card { width: 400px; }
+            .card, .info-card { width: 280px; }
+        }
+
+        /* --- 하단 텍스트 스크롤 --- */
+        .ticker-wrap {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #000;
+            color: white;
+            padding: 5px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        .ticker-wrap .ticker-text {
+            display: inline-block;
+            animation: ticker 50s linear infinite;
+            padding-left: 100%;
+        }
+
+        .ticker-wrap .ticker-text span {
+            padding: 0 2rem;
+            font-size: 1em;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
         }
     </style>
 </head>
@@ -148,6 +191,13 @@
         <div class="info-card">
             <h2>이벤트 참여 방법</h2>
             <p>(실제 이벤트 참여 방법을 적어야 함.)</p>
+        </div>
+    </div>
+
+    <div class="ticker-wrap">
+        <div class="ticker-text">
+            <span>협성대학교 방송국 HBS가 주최하는 이벤트 "HBS, 넌 내꺼야!"에 참여해주셔서 감사합니다! ◆</span>
+            <span>협성대학교 방송국 HBS가 주최하는 이벤트 "HBS, 넌 내꺼야!"에 참여해주셔서 감사합니다! ◆</span>
         </div>
     </div>
 
@@ -197,6 +247,34 @@
                 saveImageButton.classList.add('disabled');
             }
 
+            // --- 버튼 애니메이션 및 지연 링크 이동 ---
+            const actionButtons = document.querySelectorAll('.action-button:not(.disabled)');
+
+            actionButtons.forEach(button => {
+                const press = (e) => {
+                    button.classList.add('button-pressed');
+                };
+                const release = (e) => {
+                    button.classList.remove('button-pressed');
+                };
+
+                button.addEventListener('mousedown', press);
+                button.addEventListener('mouseup', release);
+                button.addEventListener('mouseleave', release);
+                button.addEventListener('touchstart', press, { passive: true });
+                button.addEventListener('touchend', release);
+            });
+
+            instaLink.addEventListener('click', function(event) {
+                if (this.classList.contains('disabled')) return;
+                event.preventDefault();
+                const href = this.href;
+                const target = this.target;
+                setTimeout(() => {
+                    window.open(href, target);
+                }, 200);
+            });
+
             saveImageButton.addEventListener('click', () => {
                 if (saveImageButton.classList.contains('disabled')) return;
 
@@ -205,8 +283,8 @@
 
                 // 캡처할 영역을 감싸는 래퍼 생성
                 const screenshotWrapper = document.createElement('div');
-                screenshotWrapper.style.padding = '25px'; // 배경 여백
-                screenshotWrapper.style.display = 'inline-block'; // 내용에 맞게 크기 조절
+                screenshotWrapper.style.padding = '25px';
+                screenshotWrapper.style.display = 'inline-block';
                 
                 // body의 배경 스타일을 래퍼에 적용
                 const bodyStyle = window.getComputedStyle(document.body);
